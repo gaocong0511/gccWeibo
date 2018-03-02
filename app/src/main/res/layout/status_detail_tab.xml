@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <RadioGroup
+        android:id="@+id/rg_status_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/detail_repost"
+            style="@style/RadioButtonStatusDetailTab"
+            android:text="@string/detail_repost" />
+
+        <RadioButton
+            android:id="@+id/detail_comment"
+            style="@style/RadioButtonStatusDetailTab"
+            android:text="@string/detail_comment" />
+
+        <RadioButton
+            android:id="@+id/detail_like"
+            style="@style/RadioButtonStatusDetailTab"
+            android:text="@string/detail_like" />
+    </RadioGroup>
+</LinearLayout>

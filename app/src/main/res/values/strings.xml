@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">testBoBO2</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="sunHeadName">吴彦祖</string>
+    <string name="captionContent">没错我就是油坊桥吴彦祖</string>
+    <string name="post">转发</string>
+    <string name="comment">评论</string>
+    <string name="contentStr">从前有个人来到了油坊桥，后来他变成了吴彦祖</string>
+    <string name="detail_repost">转发</string>
+    <string name="detail_comment">评论</string>
+    <string name="detail_like">点赞</string>
+    <string name="str_comments">评论</string>
+
+</resources>
