@@ -44,7 +44,6 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.sina.weibo.sdk.auth.AccessTokenKeeper;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
