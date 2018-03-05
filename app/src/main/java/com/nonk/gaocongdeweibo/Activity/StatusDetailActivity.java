@@ -131,6 +131,10 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
         imageLoader = ImageLoader.getInstance();
         initTitle();
         initDetailHead();
+        initTab();
+        initListView();
+        initControlBar();
+        setData();
     }
 
     /**
@@ -195,6 +199,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {
+
             }
         });
         refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {

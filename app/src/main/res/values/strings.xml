@@ -11,5 +11,6 @@
     <string name="detail_comment">评论</string>
     <string name="detail_like">点赞</string>
     <string name="str_comments">评论</string>
+    <string name="str_writeContent">写评论...</string>
 
 </resources>
