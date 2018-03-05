@@ -129,6 +129,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
     private void initView() {
         //初始化imageLoader
         imageLoader = ImageLoader.getInstance();
+        initTitle();
     }
 
     /**
