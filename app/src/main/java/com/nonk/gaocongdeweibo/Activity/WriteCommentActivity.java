@@ -1,7 +1,6 @@
 package com.nonk.gaocongdeweibo.Activity;
 
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -64,6 +63,7 @@ public class WriteCommentActivity extends BaseActivity implements View.OnClickLi
                 .setRightText("发送").setRightOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                sendComments();
             }
         });
 

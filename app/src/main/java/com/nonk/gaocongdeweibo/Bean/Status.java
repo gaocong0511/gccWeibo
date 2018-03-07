@@ -1,8 +1,9 @@
 package com.nonk.gaocongdeweibo.Bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Status {
+public class Status extends BaseBean{
 	private String created_at;
 	private long id;
 	private String mid;

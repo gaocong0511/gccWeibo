@@ -1,6 +1,7 @@
 package com.nonk.gaocongdeweibo.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.nonk.gaocongdeweibo.Activity.StatusDetailActivity;
 import com.nonk.gaocongdeweibo.Bean.PicUrls;
 import com.nonk.gaocongdeweibo.Bean.Status;
 import com.nonk.gaocongdeweibo.Bean.User;
@@ -142,6 +144,14 @@ public class StatusAdapter extends BaseAdapter {
         holder.tv_share_bottom.setText(status.getReposts_count() == 0 ? "转发" : status.getReposts_count() + "");
         holder.tv_comment_bottom.setText(status.getReposts_count() == 0 ? "评论" : status.getComments_count() + "");
         holder.tv_like_bottom.setText(status.getAttitudes_count() == 0 ? "赞" : status.getAttitudes_count() + "");
+        holder.ll_card_content.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent =new Intent(context, StatusDetailActivity.class);
+                intent.putExtra("status",status);
+                context.startActivity(intent);
+            }
+        });
         return convertView;
     }
 

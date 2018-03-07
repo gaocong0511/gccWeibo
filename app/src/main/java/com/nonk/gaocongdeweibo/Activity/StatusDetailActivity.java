@@ -5,8 +5,10 @@ import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -121,6 +123,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
 
         status = (Status) getIntent().getSerializableExtra("status");
         scroll2Comment = getIntent().getBooleanExtra("scroll2Comment", false);
+        initView();
     }
 
     /**
@@ -128,6 +131,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
      */
     private void initView() {
         //初始化imageLoader
+        comments=new ArrayList<>();
         imageLoader = ImageLoader.getInstance();
         initTitle();
         initDetailHead();
@@ -135,14 +139,18 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
         initListView();
         initControlBar();
         setData();
+        loadComments(1);
     }
 
     /**
      * 初始化标题栏
      */
     private void initTitle() {
-        //leftImage需要更换
-        new TitleBuilder(this).setTitleText("微博正文").setLeftImage(R.drawable.navigationbar_back).setLeftOnClickListener(this);
+        //leftImage需要更换--
+        new TitleBuilder(this)
+                .setTitleText("微博正文")
+                .setLeftImage(R.drawable.navigationbar_back_sel)
+                .setLeftOnClickListener(this);
     }
 
     /**
@@ -161,7 +169,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
         tv_content = (TextView) status_detail_info.findViewById(R.id.tv_content);
         include_retweeted_status = status_detail_info.findViewById(R.id.include_retweeted_status);
         tv_retweeted_content = (TextView) status_detail_info.findViewById(R.id.tv_retweeted_content);
-        fl_retweeted_imageView = (FrameLayout) include_retweeted_status.findViewById(R.id.gv_images);
+        fl_retweeted_imageView = (FrameLayout) include_retweeted_status.findViewById(R.id.include_status_image);
         gv_retweeted_iamges = (GridView) fl_retweeted_imageView.findViewById(R.id.gv_images);
         iv_retweed_iamge = (ImageView) fl_retweeted_imageView.findViewById(R.id.iv_image);
         iv_iamge.setOnClickListener(this);
@@ -180,7 +188,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
         shadow_rg_status_detail.setOnClickListener(this);
         //header
         status_detail_tab = View.inflate(this, R.layout.status_detail_tab, null);
-        rg_status_detail = (RadioGroup) status_detail_tab.findViewById(R.id.status_detail_tab);
+        rg_status_detail = (RadioGroup) status_detail_tab.findViewById(R.id.rg_status_detail);
         rb_repost = (RadioButton) status_detail_tab.findViewById(R.id.detail_repost);
         rb_comments = (RadioButton) status_detail_tab.findViewById(R.id.detail_comment);
         rb_like = (RadioButton) status_detail_tab.findViewById(R.id.detail_like);
@@ -199,13 +207,24 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {
-
+                loadComments(1);
             }
         });
         refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(RefreshLayout refreshLayout) {
+                loadComments(curPage + 1);
+            }
+        });
+        list_commment.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
 
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                //shadow_status_detail_tab.setVisibility(firstVisibleItem >= 2 ? View.VISIBLE : View.GONE);
             }
         });
     }
@@ -232,7 +251,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
         tv_subhead.setText(user.getName());
         tv_caption.setText(String.format("%s来自%s", DateUtils.getShortTime(status.getCreated_at()), Html.fromHtml(status.getSource())));
 
-        //setImages
+        setImages(status,include_status_iamge,gv_images,iv_iamge);
         if (TextUtils.isEmpty(status.getText())) {
             tv_content.setVisibility(View.GONE);
         } else {
@@ -247,7 +266,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
             String retweetedContent = "@" + retweetedStatus.getUser().getName() + ":" + retweetedStatus.getText();
             SpannableString weiboContent = StringUtils.getWeiboContent(this, tv_retweeted_content, retweetedContent);
             tv_retweeted_content.setText(weiboContent);
-            //setImages
+            setImages(retweetedStatus,fl_retweeted_imageView,gv_retweeted_iamges,iv_retweed_iamge);
         } else {
             include_retweeted_status.setVisibility(View.GONE);
         }
@@ -272,7 +291,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
 
     }
 
-    private void SetImages(final Status status, ViewGroup vgContainer, GridView gvImages, final ImageView ivImage) {
+    private void setImages(final Status status, ViewGroup vgContainer, GridView gvImages, final ImageView ivImage) {
         if (status == null) {
             return;
         }
@@ -336,6 +355,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
      * 将获取到的评论信息加入到链表之中
      *
      * @param commentsResponse
+     *        评论信息
      */
     private void addData(CommentsResponse commentsResponse) {
         for (Comment comment : commentsResponse.getComments()) {
