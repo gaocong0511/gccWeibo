@@ -6,6 +6,7 @@ import android.text.Html;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -16,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -139,7 +141,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
         initListView();
         initControlBar();
         setData();
-        loadComments(1);
+        //loadComments(1);
     }
 
     /**
@@ -157,7 +159,8 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
      * 初始化微博信息
      */
     private void initDetailHead() {
-        status_detail_info = View.inflate(this, R.layout.item_status, null);
+        RelativeLayout layout =(RelativeLayout) findViewById(R.id.rl_container);
+        status_detail_info = LayoutInflater.from(this).inflate(R.layout.item_status, layout, false);
         status_detail_info.setBackgroundResource(R.color.white);
         status_detail_info.findViewById(R.id.ll_bottom_control).setVisibility(View.GONE);
         iv_avater = (ImageView) status_detail_info.findViewById(R.id.iv_avater);
@@ -192,7 +195,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
         rb_repost = (RadioButton) status_detail_tab.findViewById(R.id.detail_repost);
         rb_comments = (RadioButton) status_detail_tab.findViewById(R.id.detail_comment);
         rb_like = (RadioButton) status_detail_tab.findViewById(R.id.detail_like);
-        rg_status_detail.setOnClickListener(this);
+        //rg_status_detail.setOnClickListener(this);
     }
 
     /**
@@ -224,7 +227,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                //shadow_status_detail_tab.setVisibility(firstVisibleItem >= 2 ? View.VISIBLE : View.GONE);
+                shadow_status_detail_tab.setVisibility(firstVisibleItem >= 2 ? View.VISIBLE : View.GONE);
             }
         });
     }
