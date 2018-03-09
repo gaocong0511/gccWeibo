@@ -141,7 +141,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
         initListView();
         initControlBar();
         setData();
-        //loadComments(1);
+        loadComments(1);
     }
 
     /**
@@ -159,8 +159,9 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
      * 初始化微博信息
      */
     private void initDetailHead() {
-        RelativeLayout layout =(RelativeLayout) findViewById(R.id.rl_container);
-        status_detail_info = LayoutInflater.from(this).inflate(R.layout.item_status, layout, false);
+        //RelativeLayout layout =(RelativeLayout) findViewById(R.id.rl_container);
+        status_detail_info = View.inflate(this,R.layout.item_status,null);
+        showToast(status_detail_info.getRootView().toString());
         status_detail_info.setBackgroundResource(R.color.white);
         status_detail_info.findViewById(R.id.ll_bottom_control).setVisibility(View.GONE);
         iv_avater = (ImageView) status_detail_info.findViewById(R.id.iv_avater);
