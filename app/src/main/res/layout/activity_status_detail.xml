@@ -19,17 +19,17 @@
         <com.scwang.smartrefresh.layout.SmartRefreshLayout
             android:id="@+id/refreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_gravity="center">
 
             <com.scwang.smartrefresh.layout.header.ClassicsHeader
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:gravity="center" />
 
             <ListView
                 android:id="@+id/list_comment"
                 style="@style/ListViewCommon"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
                 android:dividerHeight="8dp" />
 
             <com.scwang.smartrefresh.layout.footer.ClassicsFooter

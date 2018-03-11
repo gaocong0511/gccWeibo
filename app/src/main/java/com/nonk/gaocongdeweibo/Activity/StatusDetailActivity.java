@@ -207,6 +207,8 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
         refreshLayout = (RefreshLayout) findViewById(R.id.refreshLayout);
         adapter = new StatusCommentAdapter(this, comments);
         list_commment = (ListView) findViewById(R.id.list_comment);
+        list_commment.addHeaderView(status_detail_info);
+        list_commment.addHeaderView(status_detail_tab);
         list_commment.setAdapter(adapter);
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
@@ -343,7 +345,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                if (curPage == 1) {
+                if (requestPage == 1) {
                     comments.clear();
                 }
                 curPage = requestPage;
