@@ -70,7 +70,7 @@ public class WriteCommentActivity extends BaseActivity implements View.OnClickLi
         et_write_status = (EditText) findViewById(R.id.et_write_status);
         iv_iamge = (ImageView) findViewById(R.id.iv_image);
         iv_at = (ImageView) findViewById(R.id.iv_at);
-        iv_add = (ImageView) findViewById(R.id.add);
+        iv_add = (ImageView) findViewById(R.id.iv_add);
         iv_topic = (ImageView) findViewById(R.id.iv_topic);
         iv_emoji = (ImageView) findViewById(R.id.iv_emoji);
 
@@ -109,10 +109,11 @@ public class WriteCommentActivity extends BaseActivity implements View.OnClickLi
         RequestParams params=new RequestParams();
         params.put("comment",comment);
         params.put("id",status.getId());
-        GccApi.get("comments/create.json", params, new TextHttpResponseHandler() {
+        params.put("access_token",token);
+        GccApi.post("comments/create.json", params, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-
+                showToast("发送失败");
             }
 
             @Override

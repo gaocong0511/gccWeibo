@@ -1,5 +1,6 @@
 package com.nonk.gaocongdeweibo.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Html;
@@ -133,7 +134,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
      */
     private void initView() {
         //初始化imageLoader
-        comments=new ArrayList<>();
+        comments = new ArrayList<>();
         imageLoader = ImageLoader.getInstance();
         initTitle();
         initDetailHead();
@@ -160,7 +161,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
      */
     private void initDetailHead() {
         //RelativeLayout layout =(RelativeLayout) findViewById(R.id.rl_container);
-        status_detail_info = View.inflate(this,R.layout.item_status,null);
+        status_detail_info = View.inflate(this, R.layout.item_status, null);
         showToast(status_detail_info.getRootView().toString());
         status_detail_info.setBackgroundResource(R.color.white);
         status_detail_info.findViewById(R.id.ll_bottom_control).setVisibility(View.GONE);
@@ -257,7 +258,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
         tv_subhead.setText(user.getName());
         tv_caption.setText(String.format("%s来自%s", DateUtils.getShortTime(status.getCreated_at()), Html.fromHtml(status.getSource())));
 
-        setImages(status,include_status_iamge,gv_images,iv_iamge);
+        setImages(status, include_status_iamge, gv_images, iv_iamge);
         if (TextUtils.isEmpty(status.getText())) {
             tv_content.setVisibility(View.GONE);
         } else {
@@ -272,7 +273,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
             String retweetedContent = "@" + retweetedStatus.getUser().getName() + ":" + retweetedStatus.getText();
             SpannableString weiboContent = StringUtils.getWeiboContent(this, tv_retweeted_content, retweetedContent);
             tv_retweeted_content.setText(weiboContent);
-            setImages(retweetedStatus,fl_retweeted_imageView,gv_retweeted_iamges,iv_retweed_iamge);
+            setImages(retweetedStatus, fl_retweeted_imageView, gv_retweeted_iamges, iv_retweed_iamge);
         } else {
             include_retweeted_status.setVisibility(View.GONE);
         }
@@ -360,8 +361,7 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
     /**
      * 将获取到的评论信息加入到链表之中
      *
-     * @param commentsResponse
-     *        评论信息
+     * @param commentsResponse 评论信息
      */
     private void addData(CommentsResponse commentsResponse) {
         for (Comment comment : commentsResponse.getComments()) {
@@ -377,6 +377,9 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
         switch (v.getId()) {
             case R.id.ll_comment_bottom:
                 //打开评论页
+                Intent intent = new Intent(this, WriteCommentActivity.class);
+                intent.putExtra("status", status);
+                startActivity(intent);
                 break;
             case R.id.ll_like_bottom:
                 ToastUtils.showToast(StatusDetailActivity.this, "点赞api没有对外开放", Toast.LENGTH_SHORT);
