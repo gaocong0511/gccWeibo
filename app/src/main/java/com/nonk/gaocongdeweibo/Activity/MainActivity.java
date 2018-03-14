@@ -67,6 +67,7 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         switch (v.getId()) {
             case R.id.iv_add:
                 ToastUtils.showToast(this, "add", Toast.LENGTH_SHORT);
+                //调用写微博页面
                 break;
 
             default:
