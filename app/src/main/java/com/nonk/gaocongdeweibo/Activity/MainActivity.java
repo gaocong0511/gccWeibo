@@ -1,6 +1,7 @@
 package com.nonk.gaocongdeweibo.Activity;
 
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -66,8 +67,10 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_add:
-                ToastUtils.showToast(this, "add", Toast.LENGTH_SHORT);
+                //ToastUtils.showToast(this, "add", Toast.LENGTH_SHORT);
                 //调用写微博页面
+                Intent intent=new Intent(MainActivity.this,WriteStatusActivity.class);
+                startActivity(intent);
                 break;
 
             default:

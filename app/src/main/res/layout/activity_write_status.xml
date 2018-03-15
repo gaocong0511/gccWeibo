@@ -21,6 +21,7 @@
             <EditText
                 android:id="@+id/et_write_status"
                 style="@style/TextViewSubhead"
+                android:background="@color/transparent"
                 android:layout_width="match_parent"
                 android:gravity="top"
                 android:hint="@string/str_writeStatus"
@@ -42,7 +43,8 @@
 
             <include
                 android:id="@+id/include_retweeted_status_card"
-                layout="@layout/include_retweeted_status_card"/>
+                layout="@layout/include_retweeted_status_card"
+                android:visibility="gone"/>
         </LinearLayout>
     </ScrollView>
 

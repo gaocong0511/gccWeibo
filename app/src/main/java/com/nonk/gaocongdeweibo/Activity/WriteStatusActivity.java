@@ -1,13 +1,16 @@
 package com.nonk.gaocongdeweibo.Activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -15,20 +18,25 @@ import android.widget.TextView;
 import com.nonk.gaocongdeweibo.BaseActivity;
 import com.nonk.gaocongdeweibo.Bean.Status;
 import com.nonk.gaocongdeweibo.R;
+import com.nonk.gaocongdeweibo.adapter.EmotionGvAdapter;
 import com.nonk.gaocongdeweibo.adapter.EmotionPagerAdapter;
 import com.nonk.gaocongdeweibo.adapter.WriteStatusGridImgsAdapter;
+import com.nonk.gaocongdeweibo.utils.DisplayUtils;
+import com.nonk.gaocongdeweibo.utils.EmotionUtils;
+import com.nonk.gaocongdeweibo.utils.ImageUtils;
 import com.nonk.gaocongdeweibo.utils.StringUtils;
 import com.nonk.gaocongdeweibo.utils.TitleBuilder;
 import com.nonk.gaocongdeweibo.widget.WarpHeightGridView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by monk on 2018/3/14.
  */
 
-public class WriteStatusActivity extends BaseActivity implements View.OnClickListener {
+public class WriteStatusActivity extends BaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
     //输入框
     private EditText et_write_staus;
     //添加的九宫格图片
@@ -61,7 +69,7 @@ public class WriteStatusActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.actity_write_status);
+        setContentView(R.layout.activity_write_status);
 
         retweeted_status = (Status) getIntent().getSerializableExtra("status");
         initView();
@@ -102,7 +110,7 @@ public class WriteStatusActivity extends BaseActivity implements View.OnClickLis
 
         statusGridImgsAdapter=new WriteStatusGridImgsAdapter(this,imgUris,gv_write_status);
         gv_write_status.setAdapter(statusGridImgsAdapter);
-        gv_write_status.setOnClickListener(this);
+        gv_write_status.setOnItemClickListener(this);
 
         iv_image.setOnClickListener(this);
         iv_topic.setOnClickListener(this);
@@ -111,6 +119,7 @@ public class WriteStatusActivity extends BaseActivity implements View.OnClickLis
         iv_at.setOnClickListener(this);
         imageLoader=ImageLoader.getInstance();
         initRetweetedStatus();
+        initEmotion();
     }
 
     /**
@@ -147,11 +156,114 @@ public class WriteStatusActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void initEmotion(){
+        int screenWidth= DisplayUtils.getScreenWidthPixels(this);
+        int screenHeight=DisplayUtils.getScreenHeightPixels(this);
+        int spacing=DisplayUtils.dpToPx(this,8);
+        int itemWidth=(screenWidth-spacing*8)/7;
+        int gvHeight=itemWidth*3+spacing*4;
 
+        List<GridView> gvs=new ArrayList<>();
+        List<String> emotionNames=new ArrayList<>();
+        for(String emojiName: EmotionUtils.emojiMap.keySet()){
+            emotionNames.add(emojiName);
+
+            if(emotionNames.size()==20){
+                GridView gv=createEmotionGridView(emotionNames,screenWidth,spacing,itemWidth,gvHeight);
+                gvs.add(gv);
+
+                emotionNames=new ArrayList<>();
+            }
+
+            if(emotionNames.size()==0){
+                GridView gv=createEmotionGridView(emotionNames,screenWidth,spacing,itemWidth,gvHeight);
+                gvs.add(gv);
+            }
+
+            emotionPagerAdapter =new EmotionPagerAdapter(gvs);
+            LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(screenWidth,gvHeight);
+            vp_emotion_dashboard.setLayoutParams(params);
+            vp_emotion_dashboard.setAdapter(emotionPagerAdapter);
+        }
+    }
+
+    /**
+     * 创建显示表情的GridView
+     * @param emotionNames
+     * @param gvWidth
+     * @param padding
+     * @param itemWidth
+     * @param gvHeight
+     * @return
+     */
+    private GridView createEmotionGridView(List<String> emotionNames,int gvWidth,int padding,int itemWidth,int gvHeight){
+        GridView gv=new GridView(this);
+        gv.setBackgroundResource(R.color.bg_gray);
+        gv.setSelector(R.color.transparent);
+        gv.setPadding(padding,padding,padding,padding);
+        gv.setHorizontalSpacing(padding);
+        gv.setVerticalSpacing(padding);
+
+        LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(gvWidth,gvHeight);
+        gv.setLayoutParams(params);
+
+        EmotionGvAdapter adapter=new EmotionGvAdapter(this,emotionNames,itemWidth);
+        gv.setAdapter(adapter);
+        gv.setOnItemClickListener(this);
+        return gv;
+    }
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.iv_image:
+                ImageUtils.showImagePickDialog(this);
+                break;
+            case R.id.iv_add:
+                break;
+            case R.id.iv_topic:
+                break;
+            case R.id.iv_emoji:
+                break;
+            case R.id.iv_at:
+                break;
+        }
     }
 
     @Override
-    public void onClick(View v) {
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+    }
+
+    /**
+     * 当前的评论图片内容有更新时，刷新
+     */
+    private void updateImgs(){
+        if(imgUris.size()>0){
+            gv_write_status.setVisibility(View.VISIBLE);
+            statusGridImgsAdapter.notifyDataSetChanged();
+        }else {
+            gv_write_status.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 重写当activity返回结果时的动作
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case ImageUtils.REQUEST_CODE_FROM_CAMERA:
+                if(requestCode==RESULT_CANCELED){
+                    return;
+                }
+                Uri imageUri=ImageUtils.imageUriFromCamera;
+
+                imgUris.add(imageUri);
+                updateImgs();
+                break;
+        }
     }
 }

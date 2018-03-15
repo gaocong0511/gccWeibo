@@ -42,4 +42,15 @@ public class DisplayUtils {
         context.getWindowManager().getDefaultDisplay().getMetrics(metrics);
         return metrics.widthPixels;
     }
+
+    /**
+     * 获取当前屏幕的高度
+     * @param context
+     * @return
+     */
+    public static int getScreenHeightPixels(Activity context){
+        DisplayMetrics metrics=new DisplayMetrics();
+        context.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        return metrics.heightPixels;
+    }
 }

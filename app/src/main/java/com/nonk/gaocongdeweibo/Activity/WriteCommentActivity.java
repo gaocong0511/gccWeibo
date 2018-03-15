@@ -14,6 +14,7 @@ import com.nonk.gaocongdeweibo.BaseActivity;
 import com.nonk.gaocongdeweibo.Bean.Status;
 import com.nonk.gaocongdeweibo.R;
 import com.nonk.gaocongdeweibo.gccApi.GccApi;
+import com.nonk.gaocongdeweibo.utils.ImageUtils;
 import com.nonk.gaocongdeweibo.utils.TitleBuilder;
 import com.sina.weibo.sdk.auth.AccessTokenKeeper;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
@@ -40,7 +41,7 @@ public class WriteCommentActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.actity_write_status);
+        setContentView(R.layout.activity_write_status);
 
         //获取从Intent传入的微博
         status = (Status) getIntent().getSerializableExtra("status");
@@ -85,6 +86,7 @@ public class WriteCommentActivity extends BaseActivity implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.iv_image:
+                ImageUtils.showImagePickDialog(this);
                 break;
             case R.id.iv_add:
                 break;
