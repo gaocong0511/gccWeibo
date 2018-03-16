@@ -200,6 +200,7 @@ public class WriteStatusActivity extends BaseActivity implements View.OnClickLis
         gv.setBackgroundResource(R.color.bg_gray);
         gv.setSelector(R.color.transparent);
         gv.setPadding(padding,padding,padding,padding);
+        gv.setNumColumns(7);
         gv.setHorizontalSpacing(padding);
         gv.setVerticalSpacing(padding);
 
@@ -222,6 +223,13 @@ public class WriteStatusActivity extends BaseActivity implements View.OnClickLis
             case R.id.iv_topic:
                 break;
             case R.id.iv_emoji:
+                if(ll_emotion_dashboard.getVisibility()==View.VISIBLE){
+                    ll_emotion_dashboard.setVisibility(View.GONE);
+                    iv_image.setImageResource(R.drawable.btn_insert_emotion);
+                }else{
+                    ll_emotion_dashboard.setVisibility(View.VISIBLE);
+                    iv_image.setImageResource(R.drawable.btn_insert_keyboard);
+                }
                 break;
             case R.id.iv_at:
                 break;
@@ -230,7 +238,13 @@ public class WriteStatusActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        Object itemAdapter=parent.getAdapter();
+        //如果点击事件发生在GridView的表格布局的图片上
+        if(itemAdapter instanceof WriteStatusActivity){
+            if(position==statusGridImgsAdapter.getCount()-1){
+                ImageUtils.showImagePickDialog(this);
+            }
+        }
     }
 
     /**
@@ -264,6 +278,14 @@ public class WriteStatusActivity extends BaseActivity implements View.OnClickLis
                 imgUris.add(imageUri);
                 updateImgs();
                 break;
+                case ImageUtils.REQUEST_CODE_FROM_ALBUM:
+                    if(requestCode==RESULT_CANCELED){
+                        return;
+                    }
+                    Uri image=data.getData();
+                    imgUris.add(image);
+                    updateImgs();
+                    break;
         }
     }
 }

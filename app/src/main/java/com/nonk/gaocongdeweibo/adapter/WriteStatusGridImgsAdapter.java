@@ -51,6 +51,8 @@ public class WriteStatusGridImgsAdapter extends BaseAdapter {
             convertView=View.inflate(context, R.layout.item_grid_image,null);
             holder.iv_image=(ImageView)convertView.findViewById(R.id.iv_image);
             holder.iv_delete_image=(ImageView)convertView.findViewById(R.id.iv_delete_image);
+            //忘记设置此属性会导致报错
+            convertView.setTag(holder);
         }else {
             holder=(ViewHolder)convertView.getTag();
         }

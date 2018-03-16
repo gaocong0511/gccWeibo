@@ -41,6 +41,8 @@ public class ImageUtils {
                     public void onItemSelected(int position, String item) {
                         if (position == 0) {
                             checkPermissions(activity);
+                        }else if(position==1){
+                            pickImageFromAlbum(activity);
                         }
                     }
                 })
@@ -134,5 +136,12 @@ public class ImageUtils {
         values.put(MediaStore.Images.Media.MIME_TYPE,"image/jpeg");
         Uri uri=context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
         return uri;
+    }
+
+    public static void pickImageFromAlbum(final Activity activity){
+        Intent intent=new Intent();
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        activity.startActivityForResult(intent,REQUEST_CODE_FROM_ALBUM);
     }
 }
