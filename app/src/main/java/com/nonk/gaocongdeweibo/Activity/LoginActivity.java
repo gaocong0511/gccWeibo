@@ -39,6 +39,14 @@ public class LoginActivity extends BaseActivity {
                 mSsoHandler.authorize(new AuthListener());
             }
         });
+        Button weicoLoginBtn=(Button)findViewById(R.id.weico_login_btn);
+        weicoLoginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(LoginActivity.this,WeicoLoginActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
