@@ -2,12 +2,15 @@ package com.nonk.gaocongdeweibo.Activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.text.SpannableString;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -38,6 +41,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sina.weibo.sdk.auth.AccessTokenKeeper;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -228,46 +234,52 @@ public class WriteStatusActivity extends BaseActivity implements View.OnClickLis
     /**
      * 发送微博的入口
      */
-    private void sendStatus(){
-        String statusContent=et_write_staus.getText().toString();
-        if(TextUtils.isEmpty(statusContent)){
+    private void sendStatus() {
+        String statusContent = et_write_staus.getText().toString();
+        if (TextUtils.isEmpty(statusContent)) {
             showToast("微博内容不能为空");
             return;
         }
 
-        String imgFilePath=null;
-        if(imgUris.size()>0){
-            Uri uri=imgUris.get(0);
-            imgFilePath=ImageUtils.getRealPathFromUri(this,uri);
+        String imgFilePath = null;
+        if (imgUris.size() > 0) {
+            Uri uri = imgUris.get(0);
+            imgFilePath = ImageUtils.getRealPathFromUri(this, uri);
         }
-
+        Bitmap bm = BitmapFactory.decodeFile(imgFilePath);
         //转发微博的存储的信息
-        long retweedStatusId=cardStatus==null?-1:cardStatus.getId();
+        long retweedStatusId = cardStatus == null ? -1 : cardStatus.getId();
 
-        String postUrl="statuses/";
-        RequestParams params=new RequestParams();
-        Oauth2AccessToken accessToken= AccessTokenKeeper.readAccessToken(this);
-        String token=accessToken.getToken();
-        params.add("access_token",token);
-        params.add("status",statusContent);
-        if(retweedStatusId>0){
-            postUrl+="repost.json";
-            params.add("id",retweedStatusId+"");
-        }else if(!TextUtils.isEmpty(imgFilePath)){
-            postUrl+="upload.json";
-            params.add("pic",imgFilePath);
-        }else {
-            postUrl+="update.json";
+        String postUrl = "statuses/";
+        RequestParams params = new RequestParams();
+        Oauth2AccessToken accessToken = AccessTokenKeeper.readAccessToken(this);
+        String token = accessToken.getToken();
+        params.add("access_token", token);
+        params.add("status", statusContent);
+        if (retweedStatusId > 0) {
+            postUrl += "repost.json";
+            params.add("id", retweedStatusId + "");
+        } else if (!TextUtils.isEmpty(imgFilePath)) {
+            postUrl += "upload.json";
+            //发图片时没有进行压缩  直接进行put  然后将图片给放进去
+            File myFile = new File(imgFilePath);
+            try {
+                params.put("pic", myFile);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        } else {
+            postUrl += "update.json";
         }
         GccApi.post(postUrl, params, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                ToastUtils.showToast(WriteStatusActivity.this,"发送失败", Toast.LENGTH_SHORT);
+                ToastUtils.showToast(WriteStatusActivity.this, "发送失败", Toast.LENGTH_SHORT);
             }
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                ToastUtils.showToast(WriteStatusActivity.this,"发送成功",Toast.LENGTH_SHORT);
+                ToastUtils.showToast(WriteStatusActivity.this, "发送成功", Toast.LENGTH_SHORT);
                 WriteStatusActivity.this.finish();
             }
         });
@@ -310,24 +322,25 @@ public class WriteStatusActivity extends BaseActivity implements View.OnClickLis
         if (itemAdapter instanceof WriteStatusActivity) {
             if (position == statusGridImgsAdapter.getCount() - 1) {
                 ImageUtils.showImagePickDialog(this);
-            } else if (itemAdapter instanceof EmotionGvAdapter) {
-                EmotionGvAdapter adapter = (EmotionGvAdapter) itemAdapter;
-                //如果点击的是删除表情按钮
-                if (position == emotionPagerAdapter.getCount() - 1) {
-                    et_write_staus.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
-                } else {
-                    //如果点击的是表情的话
-                    //获得表情
-                    String emotionName = adapter.getItem(position);
-                    //获得当前正在编辑的位置
-                    int curPosition = et_write_staus.getSelectionStart();
-                    StringBuilder stringBuilder = new StringBuilder(et_write_staus.getText().toString());
-                    stringBuilder.insert(curPosition, emotionName);
-                    SpannableString content = StringUtils.getWeiboContent(this, et_write_staus, stringBuilder.toString());
-                    et_write_staus.setText(content);
-                    et_write_staus.setSelection(curPosition + emotionName.length());
-                }
             }
+        } else if (itemAdapter instanceof EmotionGvAdapter) {
+            EmotionGvAdapter adapter = (EmotionGvAdapter) itemAdapter;
+            //如果点击的是删除表情按钮
+            if (position == emotionPagerAdapter.getCount() - 1) {
+                et_write_staus.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
+            } else {
+                //如果点击的是表情的话
+                //获得表情
+                String emotionName = adapter.getItem(position);
+                //获得当前正在编辑的位置
+                int curPosition = et_write_staus.getSelectionStart();
+                StringBuilder stringBuilder = new StringBuilder(et_write_staus.getText().toString());
+                stringBuilder.insert(curPosition, emotionName);
+                SpannableString content = StringUtils.getWeiboContent(this, et_write_staus, stringBuilder.toString());
+                et_write_staus.setText(content);
+                et_write_staus.setSelection(curPosition + emotionName.length());
+            }
+
         }
     }
 
@@ -372,5 +385,21 @@ public class WriteStatusActivity extends BaseActivity implements View.OnClickLis
                 updateImgs();
                 break;
         }
+    }
+
+    private String encode(String path) {
+        //decode to bitmap
+        Bitmap bitmap = BitmapFactory.decodeFile(path);
+        //Log.d(TAG, "bitmap width: " + bitmap.getWidth() + " height: " + bitmap.getHeight());
+        //convert to byte array
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] bytes = baos.toByteArray();
+
+        //base64 encode
+        byte[] encode = Base64.encode(bytes, Base64.DEFAULT);
+        String encodeString = new String(encode);
+        //mTvShow.setText(encodeString);
+        return encodeString;
     }
 }
