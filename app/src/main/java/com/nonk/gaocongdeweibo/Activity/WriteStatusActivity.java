@@ -148,6 +148,7 @@ public class WriteStatusActivity extends BaseActivity implements View.OnClickLis
             if (repostStatus != null) {
                 String content = "//@" + retweeted_status.getUser().getName() + ":" + retweeted_status.getText();
                 et_write_staus.setText(StringUtils.getWeiboContent(this, et_write_staus, content));
+                cardStatus=repostStatus;
             } else {
                 et_write_staus.setText("转发微博");
                 cardStatus = retweeted_status;

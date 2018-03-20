@@ -14,6 +14,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nonk.gaocongdeweibo.Activity.StatusDetailActivity;
+import com.nonk.gaocongdeweibo.Activity.WriteCommentActivity;
+import com.nonk.gaocongdeweibo.Activity.WriteStatusActivity;
 import com.nonk.gaocongdeweibo.Bean.PicUrls;
 import com.nonk.gaocongdeweibo.Bean.Status;
 import com.nonk.gaocongdeweibo.Bean.User;
@@ -144,12 +146,28 @@ public class StatusAdapter extends BaseAdapter {
         holder.tv_share_bottom.setText(status.getReposts_count() == 0 ? "转发" : status.getReposts_count() + "");
         holder.tv_comment_bottom.setText(status.getReposts_count() == 0 ? "评论" : status.getComments_count() + "");
         holder.tv_like_bottom.setText(status.getAttitudes_count() == 0 ? "赞" : status.getAttitudes_count() + "");
+        //点击转发时
+        holder.ll_share_bottom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, WriteStatusActivity.class);
+                intent.putExtra("status", status);
+                context.startActivity(intent);
+            }
+        });
+        //点击评论时
         holder.ll_card_content.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent =new Intent(context, StatusDetailActivity.class);
-                intent.putExtra("status",status);
-                context.startActivity(intent);
+                if (status.getComments_count() > 0) {
+                    Intent intent = new Intent(context, StatusDetailActivity.class);
+                    intent.putExtra("status", status);
+                    context.startActivity(intent);
+                }else {
+                    Intent intent=new Intent(context, WriteCommentActivity.class);
+                    intent.putExtra("status",status);
+                    context.startActivity(intent);
+                }
             }
         });
         return convertView;
