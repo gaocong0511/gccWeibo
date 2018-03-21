@@ -36,6 +36,6 @@ public class WarpHeightListView extends ListView{
         }else {
             heightSpec=heightMeasureSpec;
         }
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        super.onMeasure(widthMeasureSpec, heightSpec);
     }
 }

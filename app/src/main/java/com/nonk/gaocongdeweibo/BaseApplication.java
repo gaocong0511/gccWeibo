@@ -3,6 +3,7 @@ package com.nonk.gaocongdeweibo;
 import android.app.Application;
 import android.content.Context;
 
+import com.nonk.gaocongdeweibo.Bean.User;
 import com.nonk.gaocongdeweibo.utils.ImageOptHelper;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -14,6 +15,7 @@ public class BaseApplication extends Application {
     /**
      *
      */
+    public User currentUser;
     @Override
     public void onCreate() {
         super.onCreate();

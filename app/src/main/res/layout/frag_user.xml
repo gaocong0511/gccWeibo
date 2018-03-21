@@ -12,53 +12,71 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/ll_user_info"
             android:layout_width="match_parent"
-            android:layout_height="88dp"
-            android:orientation="horizontal"
-            android:padding="16dp">
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical"
+            android:paddingTop="4dp">
 
-            <ImageView
-                android:id="@+id/iv_avater"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:layout_gravity="center_vertical"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_launcher" />
-
-            <RelativeLayout
-                android:id="@+id/rl_content"
+            <LinearLayout
+                android:id="@+id/ll_user_info"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingLeft="8dp"
-                android:paddingTop="8dp">
+                android:layout_height="88dp"
+                android:orientation="horizontal"
+                android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/tv_subhead"
-                    style="@style/TextViewSubhead"
-                    android:text="昵称" />
-
-                <TextView
-                    android:id="@+id/tc_caption"
-                    style="@style/TextViewCaption"
-                    android:layout_below="@id/tv_subhead"
-                    android:layout_marginTop="8dp"
-                    android:text="lalalalllla"
-                    android:textColor="@color/txt_gray" />
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/rightarrow"/>
-            </RelativeLayout>
+                    android:id="@+id/iv_avater"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_launcher" />
+
+                <RelativeLayout
+                    android:id="@+id/rl_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="8dp"
+                    android:paddingTop="8dp">
+
+                    <TextView
+                        android:id="@+id/tv_subhead"
+                        style="@style/TextViewSubhead"
+                        android:text="昵称" />
+
+                    <TextView
+                        android:id="@+id/tv_caption"
+                        style="@style/TextViewCaption"
+                        android:layout_below="@id/tv_subhead"
+                        android:layout_marginTop="8dp"
+                        android:text="lalalalllla"
+                        android:textColor="@color/txt_gray" />
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/rightarrow" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/divider_gray" />
+
+            <include layout="@layout/include_userinfo_interaction" />
+
+            <com.nonk.gaocongdeweibo.widget.WarpHeightListView
+                android:id="@+id/lv_user_items"
+                style="@style/ListViewCommon"
+                android:layout_marginTop="8dp"
+                android:layout_height="wrap_content">
+
+            </com.nonk.gaocongdeweibo.widget.WarpHeightListView>
         </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@color/divider_gray"/>
-
-        <!--<include layout=""-->
     </ScrollView>
 </LinearLayout>
