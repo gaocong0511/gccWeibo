@@ -9,9 +9,11 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.nonk.gaocongdeweibo.BaseActivity;
@@ -21,8 +23,11 @@ import com.nonk.gaocongdeweibo.Bean.User;
 import com.nonk.gaocongdeweibo.R;
 import com.nonk.gaocongdeweibo.adapter.StatusAdapter;
 import com.nonk.gaocongdeweibo.gccApi.GccApi;
+import com.nonk.gaocongdeweibo.utils.ImageOptHelper;
 import com.nonk.gaocongdeweibo.utils.TitleBuilder;
 import com.nonk.gaocongdeweibo.widget.UnderlineIndicatorView;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -79,6 +84,8 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
 
     private int curScrollY;
 
+    private ImageLoader imageLoader;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,7 +95,59 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
             isCurrentUser = true;
             user = application.currentUser;
         }
+        gson=new Gson();
+        imageLoader = ImageLoader.getInstance();
         initView();
+        loadData();
+    }
+
+    private void loadData() {
+        if (isCurrentUser) {
+            setUserInfo();
+        } else {
+            loadUserInfo();
+        }
+        loadStatus(1);
+    }
+
+    /**
+     * 设置当前用户的信息
+     */
+    private void setUserInfo() {
+        if (user == null) {
+            return;
+        }
+        tv_name.setText(user.getName());
+        titlebar_tv.setText(user.getName());
+        imageLoader.displayImage(user.getAvatar_large(), new ImageViewAware(iv_avater),
+                ImageOptHelper.getAvatarOptions());
+
+        tv_follows.setText("关注" + user.getFriends_count());
+        tv_fans.setText("粉丝" + user.getFollowers_count());
+        tv_sign.setText("简介" + user.getDescription());
+    }
+
+    /**
+     * 加载指定用户的信息
+     */
+    private void loadUserInfo() {
+        Oauth2AccessToken accessToken = AccessTokenKeeper.readAccessToken(this);
+        String token = accessToken.getToken();
+        RequestParams params = new RequestParams();
+        params.add("access_token", token);
+        params.add("screen_name", username);
+        GccApi.get("users/show.json", params, new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                user = gson.fromJson(responseString, User.class);
+                setUserInfo();
+            }
+        });
     }
 
     private void initView() {
@@ -97,6 +156,8 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
                 .setLeftImage(R.drawable.navigationbar_back_sel)
                 .setLeftOnClickListener(this)
                 .build();
+        iv_title_left = title.findViewById(R.id.titlebar_iv_left);
+        titlebar_tv = title.findViewById(R.id.titlebar_tv);
         initInfoHead();
         initTab();
         initLitView();
@@ -161,9 +222,13 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
             }
         });
 
+
+
         lv_status.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+
             @Override
             public void onScrollChange(View view, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                curScrollY = scrollY;
                 if (minImageHeight == -1) {
                     minImageHeight = iv_user_info_head.getHeight();
                 }
@@ -176,19 +241,19 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
                     iv_user_info_head.layout(0, 0, iv_user_info_head.getHeight(), minImageHeight - scrollY);
                 } else {
                     iv_user_info_head.layout(0,
-                            -scrollY-(maxImageHeight-minImageHeight),
+                            -scrollY - (maxImageHeight - minImageHeight),
                             iv_user_info_head.getWidth(),
-                            -scrollY-(maxImageHeight-minImageHeight)+iv_user_info_head.getHeight());
+                            -scrollY - (maxImageHeight - minImageHeight) + iv_user_info_head.getHeight());
                 }
             }
         });
 
         iv_user_info_head.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
-            public void onLayoutChange(View viewint ,int left, int top, int right, int bottom,
+            public void onLayoutChange(View viewint, int left, int top, int right, int bottom,
                                        int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                if(curScrollY == bottom-oldBottom){
-                    iv_user_info_head.layout(0,0,iv_user_info_head.getWidth(),oldBottom);
+                if (curScrollY == bottom - oldBottom) {
+                    iv_user_info_head.layout(0, 0, iv_user_info_head.getWidth(), oldBottom);
                 }
             }
         });
@@ -200,8 +265,23 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
             }
 
             @Override
-            public void onScroll(AbsListView absListView,  int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                iv_user_info_head.layout(0,
+                        user_info_head.getTop(),
+                        iv_user_info_head.getWidth(),
+                        user_info_head.getTop() + iv_user_info_head.getHeight());
 
+                if (user_info_head.getBottom() < title.getBottom()) {
+                    shadow_user_info_tab.setVisibility(View.VISIBLE);
+                    title.setBackgroundResource(R.drawable.navigationbar_background);
+                    titlebar_tv.setVisibility(View.VISIBLE);
+                    iv_title_left.setImageResource(R.drawable.navigationbar_back_sel);
+                } else {
+                    shadow_user_info_tab.setVisibility(View.GONE);
+                    title.setBackgroundResource(R.drawable.userinfo_navigationbar_background);
+                    iv_title_left.setImageResource(R.drawable.userinfo_navigationbar_back_sel);
+                    titlebar_tv.setVisibility(View.GONE);
+                }
             }
         });
     }
@@ -212,9 +292,10 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
         String token = accessToken.getToken();
         params.add("access_token", token);
         if (user == null) {
-            params.add("uid", user.getId() + "");
-        } else {
             params.add("screen_name", username);
+        } else {
+            params.add("uid", user.getId() + "");
+
         }
         params.add("page", page + "");
         GccApi.get("statuses/user_timeline.json", params, new TextHttpResponseHandler() {
@@ -245,11 +326,30 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.titlebar_iv_left:
+                finish();
+                break;
 
+            default:
+                break;
+        }
     }
 
     @Override
-    public void onCheckedChanged(RadioGroup radioGroup, int i) {
+    public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+        int index = radioGroup.indexOfChild(radioGroup.findViewById(checkedId));
 
+        if (shadow_user_info_tab.getVisibility() == View.VISIBLE) {
+            shadow_ul_iv_user_info.setCurrentItem(index);
+
+            ((RadioButton) rg_user_info.findViewById(checkedId)).setChecked(true);
+            ul_iv_user_info.setCurrentItemWidthOutAnim(index);
+        } else {
+            ul_iv_user_info.setCurrentItem(index);
+
+            ((RadioButton) shadow_rg_user_info.findViewById(checkedId)).setChecked(true);
+            shadow_ul_iv_user_info.setCurrentItemWidthOutAnim(index);
+        }
     }
 }

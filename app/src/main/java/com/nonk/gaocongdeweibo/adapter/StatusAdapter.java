@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nonk.gaocongdeweibo.Activity.StatusDetailActivity;
+import com.nonk.gaocongdeweibo.Activity.UserInfoActivity;
 import com.nonk.gaocongdeweibo.Activity.WriteCommentActivity;
 import com.nonk.gaocongdeweibo.Activity.WriteStatusActivity;
 import com.nonk.gaocongdeweibo.Bean.PicUrls;
@@ -121,6 +122,14 @@ public class StatusAdapter extends BaseAdapter {
         final Status status = (Status) getItem(position);
         final User user = status.getUser();
         imageLoader.displayImage(user.getProfile_image_url(), holder.iv_avatar);
+        holder.iv_avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(context,UserInfoActivity.class);
+                intent.putExtra("username",user.getName());
+                context.startActivity(intent);
+            }
+        });
         holder.tv_subhead.setText(user.getName());
         if (status.getSource().isEmpty()) {
             holder.tv_caption.setText(DateUtils.getShortTime(status.getCreated_at()));

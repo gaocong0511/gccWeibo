@@ -30,6 +30,7 @@
             android:name=".Activity.WriteStatusActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".Activity.WeicoLoginActivity"/>
+        <activity android:name=".Activity.UserInfoActivity"/>
     </application>
 
 </manifest>
