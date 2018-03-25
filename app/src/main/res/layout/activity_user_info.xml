@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_user_info_page"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_gray">
@@ -11,15 +12,16 @@
         android:scaleType="centerCrop"
         android:src="@drawable/visitor_me_cover" />
 
+
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/refershLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <ListView
             android:id="@+id/lv_status"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
         </ListView>
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
@@ -38,4 +40,5 @@
             layout="@layout/user_info_tab"
             android:visibility="gone" />
     </LinearLayout>
+
 </RelativeLayout>

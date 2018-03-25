@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.NestedScrollView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AbsListView;
@@ -11,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -28,8 +31,12 @@ import com.nonk.gaocongdeweibo.utils.TitleBuilder;
 import com.nonk.gaocongdeweibo.widget.UnderlineIndicatorView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
+import com.scwang.smartrefresh.layout.api.RefreshFooter;
+import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnMultiPurposeListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.sina.weibo.sdk.auth.AccessTokenKeeper;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
@@ -213,18 +220,16 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
             public void onRefresh(RefreshLayout refreshLayout) {
                 loadStatus(1);
             }
+
+            
         });
 
-        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(RefreshLayout refreshLayout) {
-                loadStatus(currentPage + 1);
-            }
-        });
+        //RelativeLayout layout=findViewById(R.id.rl_user_info_page);
 
 
+       // NestedScrollView view=findViewById(R.id.scrollView);
 
-        lv_status.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+        /*view.setOnScrollChangeListener(new View.OnScrollChangeListener() {
 
             @Override
             public void onScrollChange(View view, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
@@ -246,7 +251,7 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
                             -scrollY - (maxImageHeight - minImageHeight) + iv_user_info_head.getHeight());
                 }
             }
-        });
+        });*/
 
         iv_user_info_head.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
