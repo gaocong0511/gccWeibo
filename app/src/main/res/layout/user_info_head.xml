@@ -14,13 +14,15 @@
     <ImageView
         android:id="@+id/iv_avater"
         android:layout_width="72dp"
-        android:layout_height="72dp" />
+        android:layout_height="72dp"
+        android:src="@drawable/ic_launcher"/>
 
     <TextView
         android:id="@+id/tv_name"
        style="@style/TextViewTitle"
         android:layout_marginTop="16dp"
-        android:textColor="@color/white"/>
+        android:textColor="@color/white"
+        android:text="123456"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
