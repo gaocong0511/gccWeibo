@@ -1,10 +1,14 @@
 package com.nonk.gaocongdeweibo.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
+import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.GridView;
@@ -12,18 +16,24 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.nonk.gaocongdeweibo.Activity.MainActivity;
 import com.nonk.gaocongdeweibo.Activity.StatusDetailActivity;
 import com.nonk.gaocongdeweibo.Activity.UserInfoActivity;
 import com.nonk.gaocongdeweibo.Activity.WriteCommentActivity;
 import com.nonk.gaocongdeweibo.Activity.WriteStatusActivity;
+import com.nonk.gaocongdeweibo.BaseActivity;
+import com.nonk.gaocongdeweibo.Bean.PhotoViewInfo;
 import com.nonk.gaocongdeweibo.Bean.PicUrls;
 import com.nonk.gaocongdeweibo.Bean.Status;
 import com.nonk.gaocongdeweibo.Bean.User;
 import com.nonk.gaocongdeweibo.R;
 import com.nonk.gaocongdeweibo.utils.DateUtils;
 import com.nonk.gaocongdeweibo.utils.StringUtils;
+import com.nonk.gaocongdeweibo.utils.ToastUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.previewlibrary.GPreviewBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,8 +135,8 @@ public class StatusAdapter extends BaseAdapter {
         holder.iv_avatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(context,UserInfoActivity.class);
-                intent.putExtra("username",user.getName());
+                Intent intent = new Intent(context, UserInfoActivity.class);
+                intent.putExtra("username", user.getName());
                 context.startActivity(intent);
             }
         });
@@ -172,15 +182,49 @@ public class StatusAdapter extends BaseAdapter {
                     Intent intent = new Intent(context, StatusDetailActivity.class);
                     intent.putExtra("status", status);
                     context.startActivity(intent);
-                }else {
-                    Intent intent=new Intent(context, WriteCommentActivity.class);
-                    intent.putExtra("status",status);
+                } else {
+                    Intent intent = new Intent(context, WriteCommentActivity.class);
+                    intent.putExtra("status", status);
                     context.startActivity(intent);
                 }
             }
         });
+
+        ArrayList<PicUrls> pic_urls = status.getPic_urls();
+        final ArrayList<PhotoViewInfo> urls = new ArrayList<>();
+        for (PicUrls url : pic_urls) {
+            urls.add(new PhotoViewInfo(url.getBmiddle_pic()));
+        }
+
+        holder.gv_images.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
+                ToastUtils.showToast(context,"index"+index, Toast.LENGTH_SHORT);
+                FragmentActivity activity=(FragmentActivity)context;
+                GPreviewBuilder.from(activity)
+                        .setData(urls)
+                        .setCurrentIndex(index)
+                        .setType(GPreviewBuilder.IndicatorType.Dot)
+                        .start();
+            }
+        });
         return convertView;
     }
+    /**
+     ** 查找信息
+     * 从第一个完整可见item逆序遍历，如果初始位置为0，则不执行方法内循环
+     */
+    /*private void computeBoundsBackward(int firstCompletelyVisiblePos,ArrayList<PicUrls> urls) {
+        for (int i = firstCompletelyVisiblePos;i < mThumbViewInfoList.size(); i++) {
+            View itemView = mGridLayoutManager.findViewByPosition(i);
+            Rect bounds = new Rect();
+            if (itemView != null) {
+                ImageView thumbView = (ImageView) itemView.findViewById(R.id.iv);
+                thumbView.getGlobalVisibleRect(bounds);
+            }
+            mThumbViewnfoList.get(i).setBounds(bounds);
+        }
+    }*/
 
     /**
      * @param status

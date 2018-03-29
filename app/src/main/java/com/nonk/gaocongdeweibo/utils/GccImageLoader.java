@@ -51,8 +51,6 @@ public class GccImageLoader implements IZoomMediaLoader {
             }
         });
 
-
-
     }
 
 
