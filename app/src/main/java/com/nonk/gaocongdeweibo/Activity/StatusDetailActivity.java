@@ -3,6 +3,7 @@ package com.nonk.gaocongdeweibo.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -29,6 +31,7 @@ import com.loopj.android.http.TextHttpResponseHandler;
 import com.nonk.gaocongdeweibo.BaseActivity;
 import com.nonk.gaocongdeweibo.Bean.Comment;
 import com.nonk.gaocongdeweibo.Bean.CommentsResponse;
+import com.nonk.gaocongdeweibo.Bean.PhotoViewInfo;
 import com.nonk.gaocongdeweibo.Bean.PicUrls;
 import com.nonk.gaocongdeweibo.Bean.Status;
 import com.nonk.gaocongdeweibo.Bean.User;
@@ -43,6 +46,7 @@ import com.nonk.gaocongdeweibo.utils.TitleBuilder;
 import com.nonk.gaocongdeweibo.utils.ToastUtils;
 import com.nonk.gaocongdeweibo.widget.WarpHeightGridView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.previewlibrary.GPreviewBuilder;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -178,6 +182,34 @@ public class StatusDetailActivity extends BaseActivity implements View.OnClickLi
         gv_retweeted_iamges = (GridView) fl_retweeted_imageView.findViewById(R.id.gv_images);
         iv_retweed_iamge = (ImageView) fl_retweeted_imageView.findViewById(R.id.iv_image);
         iv_iamge.setOnClickListener(this);
+        ArrayList<PicUrls> pic_urls = status.getPic_urls();
+        final ArrayList<PhotoViewInfo> urls = new ArrayList<>();
+        for (PicUrls url : pic_urls) {
+            urls.add(new PhotoViewInfo(url.getOriginal_pic()));
+        }
+        if(urls.size()==1){
+            iv_iamge.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    GPreviewBuilder.from(StatusDetailActivity.this)
+                            .setData(urls)
+                            .setCurrentIndex(0)
+                            .setType(GPreviewBuilder.IndicatorType.Dot)
+                            .start();
+                }
+            });
+        }else{
+        gv_images.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
+                //ToastUtils.showToast(context,"index"+index, Toast.LENGTH_SHORT);
+                GPreviewBuilder.from(StatusDetailActivity.this)
+                        .setData(urls)
+                        .setCurrentIndex(index)
+                        .setType(GPreviewBuilder.IndicatorType.Dot)
+                        .start();
+            }
+        });}
     }
 
     /**

@@ -159,6 +159,37 @@ public class StatusAdapter extends BaseAdapter {
             holder.tv_retweeted_content.setText(StringUtils.getWeiboContent(context, holder.tv_retweeted_content, rewteetedContent));
 
             setImages(retweeted_status, holder.include_retweeted_status_image, holder.gv_retweeted_images, holder.iv_retweeted_image);
+            ArrayList<PicUrls> pic_urls = retweeted_status.getPic_urls();
+            final ArrayList<PhotoViewInfo> urls = new ArrayList<>();
+            for (PicUrls url : pic_urls) {
+                urls.add(new PhotoViewInfo(url.getOriginal_pic()));
+            }
+            if (urls.size() == 1) {
+                holder.iv_retweeted_image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        FragmentActivity activity = (FragmentActivity) context;
+                        GPreviewBuilder.from(activity)
+                                .setData(urls)
+                                .setCurrentIndex(0)
+                                .setType(GPreviewBuilder.IndicatorType.Dot)
+                                .start();
+                    }
+                });
+            } else {
+                holder.gv_retweeted_images.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
+                        //ToastUtils.showToast(context,"index"+index, Toast.LENGTH_SHORT);
+                        FragmentActivity activity = (FragmentActivity) context;
+                        GPreviewBuilder.from(activity)
+                                .setData(urls)
+                                .setCurrentIndex(index)
+                                .setType(GPreviewBuilder.IndicatorType.Dot)
+                                .start();
+                    }
+                });
+            }
         } else {
             holder.include_retweeted_status.setVisibility(View.GONE);
         }
@@ -193,21 +224,34 @@ public class StatusAdapter extends BaseAdapter {
         ArrayList<PicUrls> pic_urls = status.getPic_urls();
         final ArrayList<PhotoViewInfo> urls = new ArrayList<>();
         for (PicUrls url : pic_urls) {
-            urls.add(new PhotoViewInfo(url.getBmiddle_pic()));
+            urls.add(new PhotoViewInfo(url.getOriginal_pic()));
         }
-
-        holder.gv_images.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
-                ToastUtils.showToast(context,"index"+index, Toast.LENGTH_SHORT);
-                FragmentActivity activity=(FragmentActivity)context;
-                GPreviewBuilder.from(activity)
-                        .setData(urls)
-                        .setCurrentIndex(index)
-                        .setType(GPreviewBuilder.IndicatorType.Dot)
-                        .start();
-            }
-        });
+        if (urls.size() == 1) {
+            holder.iv_image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    FragmentActivity activity = (FragmentActivity) context;
+                    GPreviewBuilder.from(activity)
+                            .setData(urls)
+                            .setCurrentIndex(0)
+                            .setType(GPreviewBuilder.IndicatorType.Dot)
+                            .start();
+                }
+            });
+        } else {
+            holder.gv_images.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
+                    //ToastUtils.showToast(context,"index"+index, Toast.LENGTH_SHORT);
+                    FragmentActivity activity = (FragmentActivity) context;
+                    GPreviewBuilder.from(activity)
+                            .setData(urls)
+                            .setCurrentIndex(index)
+                            .setType(GPreviewBuilder.IndicatorType.Dot)
+                            .start();
+                }
+            });
+        }
         return convertView;
     }
     /**

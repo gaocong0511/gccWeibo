@@ -10,6 +10,9 @@ import android.support.v4.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.gif.GifBitmapProvider;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
@@ -33,6 +36,7 @@ public class GccImageLoader implements IZoomMediaLoader {
         Glide.with(context).applyDefaultRequestOptions(options).load(path).into(new SimpleTarget<Drawable>() {
             @Override
             public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+
                 BitmapDrawable bd = (BitmapDrawable) resource;
                 Bitmap bm = bd.getBitmap();
                 simpleTarget.onResourceReady(bm);
